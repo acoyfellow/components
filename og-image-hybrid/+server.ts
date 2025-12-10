@@ -113,10 +113,14 @@ function generateOGImageSVG(title: string, description: string): string {
 
   // Add ellipsis if truncated
   if (titleLines.length > maxTitleLines) {
-    limitedTitleLines[maxTitleLines - 1] = limitedTitleLines[maxTitleLines - 1].slice(0, -3) + "...";
+    const lastLine = limitedTitleLines[maxTitleLines - 1];
+    const sliceEnd = Math.max(0, lastLine.length - 3);
+    limitedTitleLines[maxTitleLines - 1] = lastLine.slice(0, sliceEnd) + "...";
   }
   if (descLines.length > maxDescLines) {
-    limitedDescLines[maxDescLines - 1] = limitedDescLines[maxDescLines - 1].slice(0, -3) + "...";
+    const lastLine = limitedDescLines[maxDescLines - 1];
+    const sliceEnd = Math.max(0, lastLine.length - 3);
+    limitedDescLines[maxDescLines - 1] = lastLine.slice(0, sliceEnd) + "...";
   }
 
   // Calculate Y positions - title starts at 280, description follows after
@@ -164,6 +168,26 @@ function svgToPng(svg: string): Uint8Array {
   return resvg.render().asPng();
 }
 
+function validateSvgUrl(urlString: string): void {
+  const url = new URL(urlString);
+  // Only allow http and https schemes to prevent SSRF attacks
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error("Invalid URL scheme. Only http and https are allowed.");
+  }
+  // Block private/internal IP ranges
+  const hostname = url.hostname.toLowerCase();
+  if (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname.startsWith("192.168.") ||
+    hostname.startsWith("10.") ||
+    hostname.startsWith("172.") ||
+    hostname.endsWith(".local")
+  ) {
+    throw new Error("Access to private/internal addresses is not allowed.");
+  }
+}
+
 async function getSvgData(request: Request): Promise<string | null> {
   if (request.method === "POST") {
     return request.text();
@@ -174,6 +198,7 @@ async function getSvgData(request: Request): Promise<string | null> {
   const svgParam = url.searchParams.get("svg");
 
   if (svgUrl) {
+    validateSvgUrl(svgUrl);
     const res = await fetch(svgUrl);
     if (!res.ok) throw new Error(`Failed to fetch SVG: ${res.status}`);
     return res.text();

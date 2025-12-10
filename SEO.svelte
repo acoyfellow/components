@@ -4,11 +4,16 @@
   const baseUrl = dev ? "http://localhost:5173" : "https://closercap.com";
   const defaultOgImage = `${baseUrl}/meta.jpg`;
 
-  // PNG converter URL - set to your SVG-to-PNG Cloudflare worker endpoint
-  // Example: "https://your-worker.your-subdomain.workers.dev"
+  // PNG converter URL - Configure this to point to your deployed SVG-to-PNG Cloudflare worker
+  // See svg-to-png/+server.ts or og-image-hybrid/+server.ts for worker implementations
+  // Leave empty to use the defaultOgImage instead of dynamic OG images
   const pngConverterUrl = "https://example-svg-to-png.workers.dev";
 
   function generateOGImageUrl(title: string, description: string): string {
+    if (!pngConverterUrl || pngConverterUrl.includes("example")) {
+      // Return default OG image if converter URL is not configured
+      return defaultOgImage;
+    }
     const svgUrl = `${baseUrl}/api/og-image?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`;
     return `${pngConverterUrl}/?url=${encodeURIComponent(svgUrl)}`;
   }

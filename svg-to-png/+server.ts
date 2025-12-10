@@ -32,6 +32,26 @@ async function ensureWasm() {
   wasmInitialized = true;
 }
 
+function validateSvgUrl(urlString: string): void {
+  const url = new URL(urlString);
+  // Only allow http and https schemes to prevent SSRF attacks
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error("Invalid URL scheme. Only http and https are allowed.");
+  }
+  // Block private/internal IP ranges
+  const hostname = url.hostname.toLowerCase();
+  if (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname.startsWith("192.168.") ||
+    hostname.startsWith("10.") ||
+    hostname.startsWith("172.") ||
+    hostname.endsWith(".local")
+  ) {
+    throw new Error("Access to private/internal addresses is not allowed.");
+  }
+}
+
 async function getSvgData(request: Request): Promise<string> {
   if (request.method === "POST") {
     return request.text();
@@ -42,6 +62,7 @@ async function getSvgData(request: Request): Promise<string> {
   const svgParam = url.searchParams.get("svg");
 
   if (svgUrl) {
+    validateSvgUrl(svgUrl);
     const res = await fetch(svgUrl);
     if (!res.ok) throw new Error(`Failed to fetch SVG: ${res.status}`);
     return res.text();
