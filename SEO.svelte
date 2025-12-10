@@ -4,9 +4,13 @@
   const baseUrl = dev ? "http://localhost:5173" : "https://closercap.com";
   const defaultOgImage = `${baseUrl}/meta.jpg`;
 
+  // PNG converter URL - set to your SVG-to-PNG Cloudflare worker endpoint
+  // Example: "https://your-worker.your-subdomain.workers.dev"
+  const pngConverterUrl = "https://example-svg-to-png.workers.dev";
+
   function generateOGImageUrl(title: string, description: string): string {
     const svgUrl = `${baseUrl}/api/og-image?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`;
-    return `https://png.hardcorecloser.workers.dev/?url=${encodeURIComponent(svgUrl)}`;
+    return `${pngConverterUrl}/?url=${encodeURIComponent(svgUrl)}`;
   }
 
   interface Breadcrumb {
