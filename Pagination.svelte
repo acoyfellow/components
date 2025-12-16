@@ -28,7 +28,9 @@
   };
 
   let paginationRange = $derived.by(() => {
-    const totalPageNumbers = siblingCount * 2 + 3;
+    // Minimum pages shown: first page (1) + current page (1) + last page (1) = 3
+    const MINIMUM_PAGES_SHOWN = 3;
+    const totalPageNumbers = siblingCount * 2 + MINIMUM_PAGES_SHOWN;
 
     if (totalPageNumbers >= totalPages) {
       return range(1, totalPages);

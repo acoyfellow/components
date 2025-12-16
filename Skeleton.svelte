@@ -27,13 +27,6 @@
   let computedHeight = $derived(
     height || (variant === "text" ? "1rem" : variant === "circular" ? width : "100px")
   );
-
-  let lineHeights = $derived.by(() => {
-    if (variant !== "text" || lines <= 1) return [];
-    return Array.from({ length: lines - 1 }, (_, i) => ({
-      width: i === lines - 2 ? "75%" : "100%",
-    }));
-  });
 </script>
 
 {#if variant === "text" && lines > 1}

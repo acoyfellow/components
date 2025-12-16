@@ -63,11 +63,13 @@
   onmouseleave={hide}
   onfocus={show}
   onblur={hide}
-  role="tooltip"
+  aria-describedby={visible && text ? "tooltip-content" : undefined}
 >
   {@render children()}
   {#if visible && text}
     <div
+      id="tooltip-content"
+      role="tooltip"
       class="absolute z-50 px-2 py-1 text-sm text-white bg-gray-900 rounded shadow-lg whitespace-nowrap pointer-events-none {positionClasses[position]}"
     >
       {text}
