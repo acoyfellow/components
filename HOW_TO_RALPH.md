@@ -37,11 +37,12 @@ Learnings and patterns. Update after each story.
 2. **Write test first**: Create test file from story's `test_file`
 3. **Implement**: Modify files from `files_to_modify[]`
 4. **Verify**: Run `verification` command (must pass)
-5. **Commit**: `git commit -m "feat: [ID] - [Title]"`
-6. **Update tracking**:
+5. **Check TypeScript satisfaction**: Run type-checking (e.g., `tsc --noEmit`) and ensure there are no errors
+6. **Commit**: `git commit -m "feat: [ID] - [Title]"`
+7. **Update tracking**:
    - Set story `status` to `"completed"` in `prd.json`
    - Add learnings to `progress.txt`
-7. **Repeat**: Go to step 1
+8. **Repeat**: Go to step 1
 
 ## Absolute Rules
 
@@ -50,6 +51,7 @@ Learnings and patterns. Update after each story.
 3. **Tests first**: Write tests before implementation
 4. **Verify before commit**: Run verification command, only commit if green
 5. **Memory is files**: Persistent memory is git commits, `prd.json`, `progress.txt`, `CHANGELOG.md`
+6. **TypeScript satisfaction**: Ensure no type errors (via `tsc --noEmit`) are present before committing
 
 ## Example `prd.json` Structure
 
@@ -123,4 +125,3 @@ Before committing:
 - **File-based**: All state in version-controlled files
 - **Incremental**: One small story at a time
 - **Verified**: Never commit without passing verification
-
